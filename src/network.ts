@@ -14,5 +14,10 @@ export class Network {
         this.nodes.push(node);
     }
 
-    
+    simulateFileTransfer(){
+        if(this.nodes.length < 2 ){
+            console.log("Need at lats two nodes for a file transfer simulation")
+            return;
+        }
+    }
 }
