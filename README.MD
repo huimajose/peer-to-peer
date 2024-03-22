@@ -10,7 +10,7 @@ Este é um projeto que implementa um sistema básico de troca de arquivos peer-t
 4. **Simulação de Rede**: Uma rede básica é simulada para testar a troca de arquivos entre os nós.
 5. **Verificação de Existência e Modificação de Arquivos**: Antes de realizar o download de um arquivo, verifica-se se o arquivo já existe no nó de destino e se houve alguma modificação no arquivo.
 6. **Sincronização de Arquivos**: Adicionado um utilitário para varrer a rede e sincronizar os arquivos entre os nós, copiando e fazendo o download apenas dos arquivos que foram modificados.
-
+7. **Compressão de Arquivos**: Implementar compressão de arquivos para reduzir o tamanho dos dados transferidos.
 
 ## Implementações Futuras Propostas
 
@@ -21,9 +21,8 @@ Este é um projeto que implementa um sistema básico de troca de arquivos peer-t
 5. **Sincronização de Arquivos**: Implementar funcionalidades para sincronização automática de arquivos entre os nós.
 6. **Interface de Usuário**: Desenvolver uma interface de usuário para facilitar a interação com os nós e os arquivos na rede.
 7. **Monitoramento e Logging**: Adicionar recursos de monitoramento e logging para acompanhar o status e as atividades dos nós.
-8. **Compressão de Arquivos**: Implementar compressão de arquivos para reduzir o tamanho dos dados transferidos.
-9. **Autenticação e Autorização**: Adicionar autenticação e autorização para controlar o acesso aos recursos da rede.
-10. **Escalabilidade**: Projetar o sistema para ser escalável, permitindo a adição fácil de novos nós e suportando redes com um grande número de participantes.
+8. **Autenticação e Autorização**: Adicionar autenticação e autorização para controlar o acesso aos recursos da rede.
+9. **Escalabilidade**: Projetar o sistema para ser escalável, permitindo a adição fácil de novos nós e suportando redes com um grande número de participantes.
 
 ## Como Usar
 

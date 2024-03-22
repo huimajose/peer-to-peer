@@ -2,6 +2,7 @@ import { File } from "./file";
 import * as path from "path";
 import * as fs from 'fs';
 import * as crypto from "crypto";
+import * as zlib from 'zlib'
 
 /**
  * Classe Node representa um nó na rede peer-to-peer.
@@ -37,8 +38,15 @@ export class Node {
      * @param file O arquivo a ser enviado para o nó.
      */
     uploadFile(file: File) {
-        const filePath = path.join(this.folderPath, file.name);
-        fs.writeFileSync(filePath, file.content);
+        const filePath = path.join(this.folderPath, file.name + '.gz');
+        const compressedFilePath = filePath + '.gz';
+        const fileContent = zlib.gzipSync(file.content)  //Compressão do conteúdo do arquivo
+       
+        console.log(`Original file size: ${file.content.length} bytes`);
+        console.log(`Compressed file size: ${fileContent.length} bytes`);
+    
+       
+        fs.writeFileSync(filePath, fileContent);
         console.log(`File "${file.name}" uploaded to Node ${this.id}`);
     }
 
@@ -47,7 +55,8 @@ export class Node {
      * @param fileName O nome do arquivo a ser baixado.
      * @param destinationNode O nó de destino para onde o arquivo será baixado.
      */
-    downloadFile(fileName: string, destinationNode: Node) {
+    /*downloadFile(fileName: string, destinationNode: Node) {
+
         const sourceFilePath = path.join(this.folderPath, fileName);
         const destinationFilePath = path.join(destinationNode.folderPath, fileName);
        
@@ -74,6 +83,25 @@ export class Node {
             console.log(`File "${fileName}" not found on Node ${this.id}`);
         }
     }
+
+    */
+
+
+    downloadFile(fileName: string, destinationNode: Node) {
+        const sourceFilePath = path.join(this.folderPath, fileName + '.gz'); // Adicione '.gz' ao nome do arquivo
+        const destinationFilePath = path.join(destinationNode.folderPath, fileName);
+    
+        if (fs.existsSync(sourceFilePath)) {
+            const compressedFileContent = fs.readFileSync(sourceFilePath);
+            const fileContent = zlib.gunzipSync(compressedFileContent); // Descomprimir o conteúdo do arquivo
+    
+            fs.writeFileSync(destinationFilePath, fileContent);
+            console.log(`Node ${this.id} downloaded file "${fileName}" to Node ${destinationNode.id}`);
+        } else {
+            console.log(`File "${fileName}" not found on Node ${this.id}`);
+        }
+    }
+    
 
     /**
      * Calcula o hash SHA-256 de um arquivo.
