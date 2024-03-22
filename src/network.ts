@@ -1,6 +1,6 @@
 //network
-import fs from 'fs'
-import path from 'path';
+import * as fs from 'fs'
+
 import { Node } from "./node";
 import { File } from "./file";
 

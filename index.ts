@@ -6,16 +6,17 @@ import { File } from "./src/file";
 //criando a rede e adicionando nós
 const network = new Network();
 
-const node1 = new Node(1);
-const node2 = new Node(2);
+
+const node1 = new Node('Node 1');
+const node2 = new Node('Node 2');
+
+network.addNode(node1);
+network.addNode(node2)
 
 
+//Criando pastas correspondentes aos nós
+network.createNodeFolders();
 
-const file = new File("example.txt", "This is an example file content")
-node2.uploadFile(file)
 
-
-const downloadFile = node2.downloadFile("example.txt")
-if(downloadFile){
-    node1.uploadFile(downloadFile)
-}
+//simulando a transferencia de arquivos
+network.simulateFileTransfer();

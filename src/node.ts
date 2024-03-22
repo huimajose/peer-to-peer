@@ -1,8 +1,8 @@
 // node.ts
 
 import { File } from "./file";
-import path from "path";
-import fs from 'fs'
+import * as path from "path";
+import * as fs from 'fs'
 
 export class Node {
     id: string;
@@ -12,7 +12,8 @@ export class Node {
     constructor(id: string) {
         this.id = id;
         this.files = [];
-        this.folderPath = path.join(__dirname, 'nodes', this.id)
+        this.folderPath = path.join(__dirname, 'nodes', this.id.replace(/\s+/g, '-'));
+
         this.createFolder()
     }
 
@@ -29,14 +30,14 @@ export class Node {
     }
 
     downloadFile(fileName: string, destinationNode: Node){
-   
-        const sourceFilePath = path.join(this.folderPath, fileName)
+        const sourceFilePath = path.join(this.folderPath, fileName);
         if(fs.existsSync(sourceFilePath)){
-            const destinationFilePath = path.join(destinationNode.folderPath)
+            const destinationFilePath = path.join(destinationNode.folderPath, fileName); // Incluindo o nome do arquivo no caminho de destino
             fs.copyFileSync(sourceFilePath, destinationFilePath);
-            console.log(`Node ${this.id} downloaded file "${fileName}" do Node ${destinationNode.id} `)
+            console.log(`Node ${this.id} downloaded file "${fileName}" to Node ${destinationNode.id}`);
         }else{
-            console.log(`File "${fileName}" not found on Node ${this.id}`)
+            console.log(`File "${fileName}" not found on Node ${this.id}`);
         }
-    }   
+    }
+    
 }
