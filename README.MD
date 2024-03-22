@@ -8,6 +8,9 @@ Este é um projeto que implementa um sistema básico de troca de arquivos peer-t
 2. **Download de Arquivos**: Os nós podem baixar arquivos de outros nós na rede.
 3. **Transferência de Arquivos Reais**: Os arquivos são transferidos fisicamente entre as pastas dos nós no sistema de arquivos.
 4. **Simulação de Rede**: Uma rede básica é simulada para testar a troca de arquivos entre os nós.
+5. **Verificação de Existência e Modificação de Arquivos**: Antes de realizar o download de um arquivo, verifica-se se o arquivo já existe no nó de destino e se houve alguma modificação no arquivo.
+6. **Sincronização de Arquivos**: Adicionado um utilitário para varrer a rede e sincronizar os arquivos entre os nós, copiando e fazendo o download apenas dos arquivos que foram modificados.
+
 
 ## Implementações Futuras Propostas
 
