@@ -13,5 +13,9 @@
     "rimraf": "^5.0.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.3"
+  },
+  "dependencies": {
+    "@types/crypto-js": "^4.2.2",
+    "crypto": "^1.0.1"
   }
 }

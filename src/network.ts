@@ -24,7 +24,7 @@ export class Network {
 
         const sender = this.nodes[0];
         const reciever = this.nodes[1]
-        const file = new File("example.txt", "This is an example file content")
+        const file = new File("example1.txt", "This is an example file content")
         
         sender.uploadFile(file);
         sender.downloadFile(file.name, reciever)
