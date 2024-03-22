@@ -1,4 +1,6 @@
 //network
+import fs from 'fs'
+import path from 'path';
 import { Node } from "./node";
 import { File } from "./file";
 
@@ -25,6 +27,14 @@ export class Network {
         const file = new File("example.txt", "This is an example file content")
         
         sender.uploadFile(file);
-        sender.downloadFile(file.name)
+        sender.downloadFile(file.name, reciever)
+    }
+
+    createNodeFolders() {
+        this.nodes.forEach(node  =>{
+            if(!fs.existsSync(node.folderPath)){
+                fs.mkdirSync(node.folderPath)
+            }
+        } )
     }
 }
