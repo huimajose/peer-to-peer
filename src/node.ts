@@ -28,15 +28,15 @@ export class Node {
         console.log(`File "${file.name}" uploaded to Node ${this.id}`);
     }
 
-    downloadFile(fileName: string){
-        console.log(`Trying to download file "${fileName}" from Node ${this.id}`);
-        const fileToDownload = this.files.find(file => file.name === fileName );
-        if(fileToDownload){
-            console.log(`Node ${this.id} downloaded file "${fileName}"`);
-            return fileToDownload;
-        } else {
-            console.log(`File "${fileName}" not found on Node ${this.id}`);
-            return null;
+    downloadFile(fileName: string, destinationNode: Node){
+   
+        const sourceFilePath = path.join(this.folderPath, fileName)
+        if(fs.existsSync(sourceFilePath)){
+            const destinationFilePath = path.join(destinationNode.folderPath)
+            fs.copyFileSync(sourceFilePath, destinationFilePath);
+            console.log(`Node ${this.id} downloaded file "${fileName}" do Node ${destinationNode.id} `)
+        }else{
+            console.log(`File "${fileName}" not found on Node ${this.id}`)
         }
     }   
 }
