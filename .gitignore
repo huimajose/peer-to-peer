@@ -1,0 +1,7 @@
+# Arquivos de compilação TypeScript
+*.js
+*.js.map
+
+# Diretório de saída de compilação
+/dist
+/node_modules
