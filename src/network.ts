@@ -9,5 +9,10 @@ export class Network {
        
         this.nodes = []
     }
+
+    addNode(node: Node){
+        this.nodes.push(node);
+    }
+
     
 }
