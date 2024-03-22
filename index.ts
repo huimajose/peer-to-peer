@@ -4,19 +4,23 @@ import { File } from "./src/file";
 import { synchronizeNetwork } from "./src/networkScanner";
 
 
+
+// Função para criar  adicionar nós dinamicamente á rede
+function createAndAddNodes(network: Network, numNodes:number) {
+    
+    for (let i = 1; i <= numNodes; i++) {
+        const node = new Node(`Node ${i}`);
+        network.addNode(node);
+    }
+}
+
 //criando a rede e adicionando nós
 const network = new Network();
 
 
-const node1 = new Node('Node 1');
-const node2 = new Node('Node 2');
-const node3 = new Node('Node 3')
-const node4 = new Node('Node 4')
+const numNodesToAdd = 5; // Numero de nós disponiveis
 
-network.addNode(node1);
-network.addNode(node2)
-network.addNode(node3)
-network.addNode(node4)
+createAndAddNodes(network, numNodesToAdd)
 
 // Criando pastas correspondentes aos nós
 try {
