@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@types/crypto-js": "^4.2.2",
-    "crypto": "^1.0.1"
+    "crypto": "^1.0.1",
+    "zlib": "^1.0.5"
   }
 }
