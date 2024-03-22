@@ -1,18 +1,30 @@
 // node.ts
 
 import { File } from "./file";
+import path from "path";
+import fs from 'fs'
 
 export class Node {
-    id: number;
+    id: string;
     files: File[];
+    folderPath: string;
 
-    constructor(id: number) {
+    constructor(id: string) {
         this.id = id;
         this.files = [];
+        this.folderPath = path.join(__dirname, 'nodes', this.id)
+        this.createFolder()
+    }
+
+    private createFolder() {
+        if(!fs.existsSync(this.folderPath)){
+            fs.mkdirSync(this.folderPath);
+        }
     }
 
     uploadFile(file: File){
-        this.files.push(file);
+        const filePath = path.join(this.folderPath, file.name)
+        fs.writeFileSync(filePath, file.content)
         console.log(`File "${file.name}" uploaded to Node ${this.id}`);
     }
 
