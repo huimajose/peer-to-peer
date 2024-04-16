@@ -1,8 +1,9 @@
-import { File } from "./file";
+import { File } from "../file";
 import * as path from "path";
 import * as fs from 'fs';
 import * as crypto from "crypto";
 import * as zlib from 'zlib'
+import { RegistrationService } from "./registrationService";
 
 /**
  * Classe Node representa um nó na rede peer-to-peer.
@@ -22,6 +23,7 @@ export class Node {
         this.files = [];
         this.folderPath = path.join(__dirname, 'nodes', this.id.replace(/\s+/g, '-'));
         this.createFolder();
+        this.registerNode();
     }
 
     /**
@@ -31,6 +33,16 @@ export class Node {
         if (!fs.existsSync(this.folderPath)) {
             fs.mkdirSync(this.folderPath);
         }
+    }
+
+    private registerNode() {
+        const registrationService = RegistrationService.getInstance();
+        registrationService.registerNode(this)
+    }
+
+    public disconnect(){
+        const registrationService = RegistrationService.getInstance();
+        registrationService.removeNodes(this.id)
     }
 
     /**

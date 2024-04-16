@@ -2,7 +2,9 @@
 import * as fs from 'fs'
 
 import { Node } from "./node";
-import { File } from "./file";
+import { File } from "../file";
+
+const NUM_FILES_TO_SEND = 3;
 
 export class Network {
     nodes: Node[];
@@ -18,7 +20,7 @@ export class Network {
 
     simulateFileTransfer(){
         if(this.nodes.length < 2 ){
-            console.log("Need at lats two nodes for a file transfer simulation")
+            console.log("Need at lats two nodes for a file transfer")
             return;
         }
 

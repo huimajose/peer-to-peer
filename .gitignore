@@ -5,3 +5,4 @@
 # Diretório de saída de compilação
 /dist
 /node_modules
+/nodes

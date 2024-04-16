@@ -1,7 +1,7 @@
-import { Network } from "./src/network";
-import { Node } from "./src/node";
+import { Network } from "./src/network/network";
+import { Node } from "./src/network/node";
 import { File } from "./src/file";
-import { synchronizeNetwork } from "./src/networkScanner";
+import { synchronizeNetwork } from "./src/network/networkScanner";
 
 
 
@@ -18,7 +18,7 @@ function createAndAddNodes(network: Network, numNodes:number) {
 const network = new Network();
 
 
-const numNodesToAdd = 5; // Numero de nós disponiveis
+const numNodesToAdd = 10; // Numero de nós disponiveis
 
 createAndAddNodes(network, numNodesToAdd)
 
