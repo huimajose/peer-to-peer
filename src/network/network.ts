@@ -5,8 +5,12 @@ import { Node } from "./node";
 import { File } from "../file";
 import path from 'path';
 import { LoadBalancer } from '../balancers/balance';
+import Parse from 'parse/node';
 
 const NUM_FILES_TO_SEND = 3;
+Parse.initialize('5ArcuTe5JcqXnW0wE9BAkQynGnfM6ScZ38V03FlR', 'Q4moQX4vvWwcg7P5RWhLImD81LF4ACwneCDjB1sI','CyQjVd5BShuRHmKucenzH5Bc4DLIikK9mgOcj3VA');
+Parse.serverURL = 'https://parseapi.back4app.com/';
+
 
 export class Network {
     nodes: Node[];
@@ -21,7 +25,9 @@ export class Network {
     addNode(node: Node){
         this.nodes.push(node);
     }
-    simulateFileTransfer() {
+
+    
+   async simulateFileTransfer() {
         if (this.nodes.length < 2) {
             console.log("Need at least two nodes for a file transfer");
             return;
@@ -39,10 +45,27 @@ export class Network {
             const receiverIndex = (index + 1) % this.nodes.length; // Circularmente, envie para o próximo nó da lista
             const receiver = this.nodes[receiverIndex];
             if (receiver.socket) { // Verifica se o socket do receptor é válido
-                filesInMaster.forEach(fileName => {
+                filesInMaster.forEach(async fileName => {
                     const filePath = path.join(masterFolderPath, fileName);
                     const fileContent = fs.readFileSync(filePath, 'utf-8');
                     sender.uploadFile(fileName, fileContent, receiver.socket!);
+
+                    const FileObject = Parse.Object.extend('Files');
+                    const fileObject = new FileObject()
+            
+        
+                fileObject.set('fileName', fileName);
+                fileObject.set('filePath', filePath);
+              
+        
+                try {
+        
+                    await fileObject.save();
+                    console.log('File metadata saved successfully');
+                    
+                } catch (error) {
+                    console.error('Error saving file metadata:', error);
+                }
                 });
             } else {
                 console.log(`Skipping upload: Node ${receiver.id} does not have a valid socket.`);

@@ -5,6 +5,13 @@ import * as crypto from "crypto";
 import * as zlib from 'zlib';
 import * as net from 'net';
 import { RegistrationService } from "./registrationService";
+import { FileMetaData } from "../FileMetaData";
+import Parse = require("parse");
+
+
+Parse.initialize('5ArcuTe5JcqXnW0wE9BAkQynGnfM6ScZ38V03FlR', 'Q4moQX4vvWwcg7P5RWhLImD81LF4ACwneCDjB1sI','CyQjVd5BShuRHmKucenzH5Bc4DLIikK9mgOcj3VA');
+Parse.serverURL = 'https://parseapi.back4app.com/';
+
 
 export class Node {
     id: string;
@@ -108,6 +115,9 @@ export class Node {
             if (!fs.existsSync(destinationFilePath)) { // Verificar se o arquivo já existe no nó de destino
                 console.log(`[Node ${this.id}] Uploading file "${fileName}"...`);
                 fs.copyFileSync(masterFilePath, destinationFilePath); // Copiar o arquivo da pasta "Master" para o nó de destino
+             
+        
+
                 console.log(`File "${fileName}" uploaded to Node ${this.id}`);
                 socket.write(JSON.stringify({ status: 'success', message: `File "${fileName}" uploaded successfully` }));
             } else {

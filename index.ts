@@ -3,6 +3,14 @@ import { Node } from "./src/network/node";
 import { synchronizeNetwork } from "./src/network/networkScanner";
 import express from 'express'
 import * as net from 'net';
+import Parse from "parse";
+
+
+
+Parse.initialize('5ArcuTe5JcqXnW0wE9BAkQynGnfM6ScZ38V03FlR', 'Q4moQX4vvWwcg7P5RWhLImD81LF4ACwneCDjB1sI','CyQjVd5BShuRHmKucenzH5Bc4DLIikK9mgOcj3VA');
+Parse.serverURL = 'https://parseapi.back4app.com/';
+
+
 
 const network = new Network();
 
