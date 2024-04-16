@@ -3,6 +3,7 @@ import * as path from "path";
 import * as fs from 'fs';
 import * as crypto from "crypto";
 import * as zlib from 'zlib'
+import net from 'net'
 import { RegistrationService } from "./registrationService";
 
 /**
@@ -13,6 +14,7 @@ export class Node {
     id: string;
     files: File[];
     folderPath: string;
+    
 
     /**
      * Cria uma nova instância de Node.
