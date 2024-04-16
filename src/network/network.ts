@@ -17,32 +17,32 @@ export class Network {
     addNode(node: Node){
         this.nodes.push(node);
     }
-
-    simulateFileTransfer(){
-        if(this.nodes.length < 2 ){
-            console.log("Need at lats two nodes for a file transfer")
+    simulateFileTransfer() {
+        if (this.nodes.length < 2) {
+            console.log("Need at least two nodes for a file transfer");
             return;
         }
-
+    
         const filesToSend: File[] = [];
         for (let i = 0; i < NUM_FILES_TO_SEND; i++) {
-            const fileName = `Example${i+1}.txt`;
-            const fileContent = `This is an example file content fro file ${i + 1}`
+            const fileName = `Example${i + 1}.txt`;
+            const fileContent = `This is an example file content for file ${i + 1}`;
             filesToSend.push(new File(fileName, fileContent));
-            
         }
-
     
-        this.nodes.forEach((sender, index) =>{
-
-            const receiver = this.nodes[(index + 1) % this.nodes.length]; // Circularmente, envie para o proximo nó da lista
-           filesToSend.forEach(file =>{
-            sender.uploadFile(file.name, file.content, receiver.socket)
-           })
-        })
-    
+        this.nodes.forEach((sender, index) => {
+            const receiverIndex = (index + 1) % this.nodes.length; // Circularmente, envie para o próximo nó da lista
+            const receiver = this.nodes[receiverIndex];
+            if (receiver.socket) { // Verifica se o socket do receptor é válido
+                filesToSend.forEach(file => {
+                    sender.uploadFile(file.name, file.content, receiver.socket!);
+                });
+            } else {
+                console.log(`Skipping upload: Node ${receiver.id} does not have a valid socket.`);
+            }
+        });
     }
-
+    
     createNodeFolders() {
         this.nodes.forEach(node  =>{
             if(!fs.existsSync(node.folderPath)){
@@ -57,7 +57,7 @@ export class Network {
             return;
         }
     
-        // Criar um conjunto para armazenar todos os nomes de arquivos em todos os nós
+        // Create a set to store all file names across all nodes
         const allFiles = new Set<string>();
         for (const node of this.nodes) {
             for (const file of node.files) {
@@ -65,19 +65,19 @@ export class Network {
             }
         }
     
-        // Iterar sobre cada nó na rede
+        // Iterate over each node in the network
         for (const node of this.nodes) {
-            // Iterar sobre todos os arquivos conhecidos em todos os nós
+            // Iterate over all known files across all nodes
             for (const fileName of allFiles) {
-                // Verificar se o arquivo não existe no nó atual
+                // Check if the file does not exist on the current node
                 if (!node.files.some(file => file.name === fileName)) {
-                    // Iterar sobre todos os outros nós, exceto o próprio nó
+                    // Iterate over all other nodes, except the current node
                     for (const otherNode of this.nodes.filter(n => n !== node)) {
-                        // Verificar se o arquivo existe no outro nó
-                        if (otherNode.files.some(file => file.name === fileName)) {
-                            // Fazer o download do arquivo do outro nó
+                        // Check if the file exists on the other node and if the other node's socket is valid
+                        if (otherNode.socket && otherNode.files.some(file => file.name === fileName)) {
+                            // Download the file from the other node
                             node.downloadFile(fileName, otherNode.socket);
-                            // Sair do loop de nós, pois o arquivo foi encontrado e baixado
+                            // Exit the node loop since the file has been found and downloaded
                             break;
                         }
                     }
@@ -85,5 +85,6 @@ export class Network {
             }
         }
     }
+    
     
 }

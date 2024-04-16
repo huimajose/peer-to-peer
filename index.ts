@@ -10,7 +10,7 @@ function createAndAddNodes(network: Network, numNodes:number) {
     
     for (let i = 1; i <= numNodes; i++) {
         const socket = new net.Socket()
-        const node = new Node(`Node ${i}`, socket);
+        const node = new Node(`Node ${i}`);
         network.addNode(node);
     }
 }
@@ -29,6 +29,11 @@ try {
 } catch (error) {
     console.error("Erro ao criar pastas dos nós:", error);
 }
+
+// Iniciar o servidor para cada nó
+network.nodes.forEach(node => {
+    node.startServer();
+});
 
 // Simulando transferência de arquivos entre os nós
 try {
