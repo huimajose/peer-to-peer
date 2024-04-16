@@ -3,6 +3,7 @@ import * as fs from 'fs'
 
 import { Node } from "./node";
 import { File } from "../file";
+import path from 'path';
 
 const NUM_FILES_TO_SEND = 3;
 
@@ -23,19 +24,26 @@ export class Network {
             return;
         }
     
-        const filesToSend: File[] = [];
-        for (let i = 0; i < NUM_FILES_TO_SEND; i++) {
-            const fileName = `Example${i + 1}.txt`;
-            const fileContent = `This is an example file content for file ${i + 1}`;
-            filesToSend.push(new File(fileName, fileContent));
+        const node1 = this.nodes.find(node => node.id === 'Node 1');
+        if (!node1) {
+            console.log("Node 1 not found");
+            return;
+        }
+    
+        const filesInNode1 = fs.readdirSync(node1.folderPath);
+        if (filesInNode1.length === 0) {
+            console.log("No files found in Node 1 folder");
+            return;
         }
     
         this.nodes.forEach((sender, index) => {
             const receiverIndex = (index + 1) % this.nodes.length; // Circularmente, envie para o próximo nó da lista
             const receiver = this.nodes[receiverIndex];
             if (receiver.socket) { // Verifica se o socket do receptor é válido
-                filesToSend.forEach(file => {
-                    sender.uploadFile(file.name, file.content, receiver.socket!);
+                filesInNode1.forEach(fileName => {
+                    const filePath = path.join(node1.folderPath, fileName);
+                    const fileContent = fs.readFileSync(filePath, 'utf-8');
+                    sender.uploadFile(fileName, fileContent, receiver.socket!);
                 });
             } else {
                 console.log(`Skipping upload: Node ${receiver.id} does not have a valid socket.`);
