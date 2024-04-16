@@ -25,7 +25,7 @@ export class Network {
         }
 
         const filesToSend: File[] = [];
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < NUM_FILES_TO_SEND; i++) {
             const fileName = `Example${i+1}.txt`;
             const fileContent = `This is an example file content fro file ${i + 1}`
             filesToSend.push(new File(fileName, fileContent));
@@ -55,6 +55,18 @@ export class Network {
     }
 
     synchronizeFiles() {
+
+        if(this.nodes.length < 2){
+            console.log("Need as leats two nodes for file synchronization")
+            return;
+        }
+
+        const allFiles = new Set<string>();
+        for(const node of this.nodes){
+            for (const file of node.files){
+                allFiles.add(file.name);
+            }
+        }
         // Itera sobre cada nó na rede
         for (const node of this.nodes) {
             // Itera sobre cada arquivo no nó atual
