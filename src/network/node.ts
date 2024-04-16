@@ -97,7 +97,10 @@ export class Node {
      * @param file O arquivo a ser enviado para o nó.
      */
     uploadFile(fileName: string, fileContent: string, socket: net.Socket) {
-        console.log(`[Node ${this.id}] Uploading file "${fileName}"...`);
+
+
+        if(!socket.destroyed){
+            console.log(`[Node ${this.id}] Uploading file "${fileName}"...`);
         const filePath = path.join(this.folderPath, fileName + '.gz');
         const compressedFilePath = filePath + '.gz';
         const compressedFileContent = zlib.gzipSync(fileContent)  //Compressão do conteúdo do arquivo
@@ -109,6 +112,7 @@ export class Node {
         fs.writeFileSync(filePath, compressedFileContent);
         console.log(`File "${fileName}" uploaded to Node ${this.id}`);
         socket.write(JSON.stringify({status: 'success', message: `File "${fileName}" uploaded successfully`}))
+    }
     }
 
     /**
@@ -149,6 +153,8 @@ export class Node {
 
 
     downloadFile(fileName: string, socket: net.Socket) {
+        if(!socket.destroyed){
+        
         console.log(`[Node ${this.id}] Downloading file "${fileName}"...`);
         const sourceFilePath = path.join(this.folderPath, fileName + '.gz'); // Adicione '.gz' ao nome do arquivo
         //const destinationFilePath = path.join(destinationNode.folderPath, fileName);
@@ -164,6 +170,7 @@ export class Node {
             socket.write(JSON.stringify({ status: 'error', message: `File "${fileName}" not found on Node ${this.id}` }));
             console.log(`[Node ${this.id}] File "${fileName}" not found`);
         }
+    }
     }
     
 
