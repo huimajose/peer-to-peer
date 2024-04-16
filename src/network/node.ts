@@ -72,9 +72,16 @@ export class Node {
             // Possível lógica de reconexão aqui
         })
 
+        
+
         server.listen(3001, () => {
             console.log(`Node ${this.id} TCP/IP server running on port 3000`)
         })
+
+        server.on('error', (err) => {
+            console.error(`Error starting TCP/IP server for Node ${this.id}: ${err.message}`);
+            // Possível lógica de tratamento de erro aqui
+        });
     }
 
     /**
