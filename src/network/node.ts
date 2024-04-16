@@ -14,18 +14,20 @@ export class Node {
     id: string;
     files: File[];
     folderPath: string;
-    
+    socket: net.Socket
 
     /**
      * Cria uma nova instância de Node.
      * @param id O identificador único do nó.
      */
-    constructor(id: string) {
+    constructor(id: string, socket: net.Socket) {
         this.id = id;
         this.files = [];
         this.folderPath = path.join(__dirname, 'nodes', this.id.replace(/\s+/g, '-'));
         this.createFolder();
         this.registerNode();
+        //this.startServer(); // innitiate TCP/IP server
+        this.socket = socket
     }
 
     /**
@@ -47,21 +49,44 @@ export class Node {
         registrationService.removeNodes(this.id)
     }
 
+
+
+    public startServer(){
+
+        const server = net.createServer((socket) =>{
+
+            socket.on('data', (data) => {
+
+                const message = JSON.parse(data.toString());
+                if(message.type === 'upload'){
+                    this.uploadFile(message.fileName, message.fileContent, socket)
+                } else if( message.type === 'download'){
+                    this.downloadFile(message.fileName, socket)
+                }
+            })
+        })
+
+        server.listen(3001, () => {
+            console.log(`Node ${this.id} TCP/IP server running on port 3000`)
+        })
+    }
+
     /**
      * Realiza o upload de um arquivo para o nó.
      * @param file O arquivo a ser enviado para o nó.
      */
-    uploadFile(file: File) {
-        const filePath = path.join(this.folderPath, file.name + '.gz');
+    uploadFile(fileName: string, fileContent: string, socket: net.Socket) {
+        const filePath = path.join(this.folderPath, fileName + '.gz');
         const compressedFilePath = filePath + '.gz';
-        const fileContent = zlib.gzipSync(file.content)  //Compressão do conteúdo do arquivo
+        const compressedFileContent = zlib.gzipSync(fileContent)  //Compressão do conteúdo do arquivo
        
-        console.log(`Original file size: ${file.content.length} bytes`);
+        console.log(`Original file size: ${fileContent.length} bytes`);
         console.log(`Compressed file size: ${fileContent.length} bytes`);
     
        
-        fs.writeFileSync(filePath, fileContent);
-        console.log(`File "${file.name}" uploaded to Node ${this.id}`);
+        fs.writeFileSync(filePath, compressedFileContent);
+        console.log(`File "${fileName}" uploaded to Node ${this.id}`);
+        socket.write(JSON.stringify({status: 'success', message: `File "${fileName}" uploaded successfully`}))
     }
 
     /**
@@ -101,18 +126,19 @@ export class Node {
     */
 
 
-    downloadFile(fileName: string, destinationNode: Node) {
+    downloadFile(fileName: string, socket: net.Socket) {
         const sourceFilePath = path.join(this.folderPath, fileName + '.gz'); // Adicione '.gz' ao nome do arquivo
-        const destinationFilePath = path.join(destinationNode.folderPath, fileName);
+        //const destinationFilePath = path.join(destinationNode.folderPath, fileName);
     
         if (fs.existsSync(sourceFilePath)) {
             const compressedFileContent = fs.readFileSync(sourceFilePath);
-            const fileContent = zlib.gunzipSync(compressedFileContent); // Descomprimir o conteúdo do arquivo
+            //const fileContent = zlib.gunzipSync(compressedFileContent); // Descomprimir o conteúdo do arquivo
     
-            fs.writeFileSync(destinationFilePath, fileContent);
-            console.log(`Node ${this.id} downloaded file "${fileName}" to Node ${destinationNode.id}`);
+            socket.write(JSON.stringify({ status: 'success', fileContent: compressedFileContent.toString('base64')}))
+           
+            //console.log(`Node ${this.id} downloaded file "${fileName}" to Node ${destinationNode.id}`);
         } else {
-            console.log(`File "${fileName}" not found on Node ${this.id}`);
+            socket.write(JSON.stringify({ status: 'error', message: `File "${fileName}" not found on Node ${this.id}` }));
         }
     }
     

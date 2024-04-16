@@ -32,17 +32,14 @@ export class Network {
             
         }
 
-        // Para cada par de nós na rede
-    for (let i = 0; i < this.nodes.length - 1; i++) {
-        const sender = this.nodes[i];
-        const receiver = this.nodes[i + 1];
+    
+        this.nodes.forEach((sender, index) =>{
 
-        // Envia todos os arquivos do remetente para o receptor
-        for (const file of filesToSend) {
-            sender.uploadFile(file);
-            sender.downloadFile(file.name, receiver);
-        }
-    }
+            const receiver = this.nodes[(index + 1) % this.nodes.length]; // Circularmente, envie para o proximo nó da lista
+           filesToSend.forEach(file =>{
+            sender.uploadFile(file.name, file.content, receiver.socket)
+           })
+        })
     
     }
 
@@ -55,31 +52,38 @@ export class Network {
     }
 
     synchronizeFiles() {
-
-        if(this.nodes.length < 2){
-            console.log("Need as leats two nodes for file synchronization")
+        if (this.nodes.length < 2) {
+            console.log("Need at least two nodes for file synchronization");
             return;
         }
-
+    
+        // Criar um conjunto para armazenar todos os nomes de arquivos em todos os nós
         const allFiles = new Set<string>();
-        for(const node of this.nodes){
-            for (const file of node.files){
+        for (const node of this.nodes) {
+            for (const file of node.files) {
                 allFiles.add(file.name);
             }
         }
-        // Itera sobre cada nó na rede
+    
+        // Iterar sobre cada nó na rede
         for (const node of this.nodes) {
-            // Itera sobre cada arquivo no nó atual
-            for (const file of node.files) {
-                // Itera sobre os nós da rede, exceto o próprio nó
-                for (const otherNode of this.nodes.filter(n => n !== node)) {
-                    // Verifica se o arquivo existe no outro nó
-                    if (!otherNode.files.some(f => f.name === file.name)) {
-                        // Se o arquivo não existir no outro nó, faz o download
-                        node.downloadFile(file.name, otherNode);
+            // Iterar sobre todos os arquivos conhecidos em todos os nós
+            for (const fileName of allFiles) {
+                // Verificar se o arquivo não existe no nó atual
+                if (!node.files.some(file => file.name === fileName)) {
+                    // Iterar sobre todos os outros nós, exceto o próprio nó
+                    for (const otherNode of this.nodes.filter(n => n !== node)) {
+                        // Verificar se o arquivo existe no outro nó
+                        if (otherNode.files.some(file => file.name === fileName)) {
+                            // Fazer o download do arquivo do outro nó
+                            node.downloadFile(fileName, otherNode.socket);
+                            // Sair do loop de nós, pois o arquivo foi encontrado e baixado
+                            break;
+                        }
                     }
                 }
             }
         }
     }
+    
 }

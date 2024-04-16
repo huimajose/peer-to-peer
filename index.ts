@@ -2,14 +2,15 @@ import { Network } from "./src/network/network";
 import { Node } from "./src/network/node";
 import { File } from "./src/file";
 import { synchronizeNetwork } from "./src/network/networkScanner";
-
+import * as net from 'net'
 
 
 // Função para criar  adicionar nós dinamicamente á rede
 function createAndAddNodes(network: Network, numNodes:number) {
     
     for (let i = 1; i <= numNodes; i++) {
-        const node = new Node(`Node ${i}`);
+        const socket = new net.Socket()
+        const node = new Node(`Node ${i}`, socket);
         network.addNode(node);
     }
 }

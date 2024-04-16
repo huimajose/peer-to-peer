@@ -15,7 +15,7 @@ export function synchronizeNetwork(nodes: Node[]) {
                 const otherFile = otherNode.files.find(f => f.name === file.name);
                 if (otherFile && otherFile.content !== file.content) {
                     // Realiza o download do arquivo do outro nó
-                    node.downloadFile(file.name, otherNode);
+                    node.downloadFile(file.name, otherNode.socket);
                 }
             }
         }
