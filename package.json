@@ -12,6 +12,7 @@
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/node": "^20.11.30",
+    "@types/parse": "^3.0.9",
     "rimraf": "^5.0.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.3"
@@ -22,6 +23,7 @@
     "crypto": "^1.0.1",
     "express": "^4.19.2",
     "net": "^1.0.2",
+    "parse": "^5.0.0",
     "zlib": "^1.0.5"
   }
 }

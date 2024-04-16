@@ -11,6 +11,7 @@ export class Node {
     files: File[];
     folderPath: string;
     socket: net.Socket | null;
+    //hash: string;
     private transferredFiles: Set<string>;
 
     constructor(id: string) {
@@ -20,6 +21,7 @@ export class Node {
         this.createFolder();
         this.registerNode();
         this.socket = null; // Inicializa como null
+        //this.hash = '';
         this.transferredFiles = new Set<string>();
 
         // Inicializa o servidor no construtor
@@ -95,9 +97,13 @@ export class Node {
     
 
     public uploadFile(fileName: string, fileContent: string, socket: net.Socket) {
+
+       
         if (!socket.destroyed) {
             const masterFilePath = path.join(__dirname, 'Master', fileName); // Caminho do arquivo na pasta "Master"
             const destinationFilePath = path.join(this.folderPath, fileName); // Caminho do arquivo no nó de destino
+
+           
     
             if (!fs.existsSync(destinationFilePath)) { // Verificar se o arquivo já existe no nó de destino
                 console.log(`[Node ${this.id}] Uploading file "${fileName}"...`);
@@ -134,4 +140,33 @@ export class Node {
         const fileData = fs.readFileSync(filePath);
         return crypto.createHash('sha256').update(fileData).digest('hex');
     }
+
+    private checkFileIntegrity(data: any, fileName: string){
+
+        
+        //Percorre todos os arquivos na pasta do nó e verifica a integridade
+        fs.readdir(this.folderPath, (err, files) => {
+            if(err ){
+                console.error(`Error reading directory ${this.folderPath}: ${err.message}`);
+                return;
+            }
+
+            //verificando a integridade
+            if(this.isDataIntegrityValid(data)){
+                console.log(`File ${fileName} is corrupted.`);
+                // Registre o arquivo corrompido em um log ou notifique o administrador
+            }
+        })
+    }
+
+    private isDataIntegrityValid(data: Buffer): Boolean{
+
+        const hash = crypto.createHash('sha256').update(data).digest('hex')
+         // Compare o hash calculado com um hash previamente conhecido para verificar a integridade dos dados
+        // Por exemplo, você pode armazenar o hash esperado junto com os arquivos ou em um banco de dados
+        const expectedHash = '...'; // Defina o hash esperado aqui
+        return hash === expectedHash;
+    }
+
+
 }

@@ -27,7 +27,7 @@ function synchronizeFiles() {
         const nodes = network.getNodes(); // Obter todos os nodes existentes
 
 
-        console.log('Nós registados: ',nodes)
+        //console.log('Nós registados: ',nodes)
                 // Iniciar o servidor para cada nó
 network.nodes.forEach(node => {
     node.startServer();
@@ -43,4 +43,4 @@ network.nodes.forEach(node => {
 // Sincroniza os arquivos entre os nós a cada 5 minutos (exemplo)
 //setInterval(synchronizeFiles, 5 * 60 * 1000); // 5 minutos em milissegundos
 
-setInterval(synchronizeFiles, 300);
+setInterval(synchronizeFiles, 3000);
