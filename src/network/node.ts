@@ -53,6 +53,14 @@ export class Node {
 
     public startServer(){
 
+        const tryReconnect = () => {
+            setTimeout(() => {
+                server.close(); // Fecha o servidor, se estiver aberto
+                console.log(`Trying to reconnect to Node ${this.id}...`);
+                this.startServer(); // Tenta iniciar o servidor novamente
+            }, 5000); // Aguarda 5 segundos antes de tentar novamente
+        };
+
         const server = net.createServer((socket) =>{
 
             socket.on('data', (data) => {
@@ -69,7 +77,7 @@ export class Node {
         this.socket.on('error', (err) =>{
 
             console.error(`Error in connection with Node ${this.id}: ${err.message}`);
-            // Possível lógica de reconexão aqui
+            tryReconnect()
         })
 
         
