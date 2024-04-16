@@ -3,23 +3,45 @@ import { Node } from "./src/network/node";
 import { File } from "./src/file";
 import { synchronizeNetwork } from "./src/network/networkScanner";
 import * as net from 'net'
+import { LoadBalancer } from "./src/balancers/balance";
 
 
 // Função para criar  adicionar nós dinamicamente á rede
 function createAndAddNodes(network: Network, numNodes:number) {
     
+    const nodes: Node[] = [];
     for (let i = 1; i <= numNodes; i++) {
         const socket = new net.Socket()
         const node = new Node(`Node ${i}`);
-        network.addNode(node);
+        nodes.push(node);
     }
+
+    //Criate nodes dinamically to the network
+  // Adicionar cada nó individualmente à rede
+  nodes.forEach(node => {
+    network.addNode(node);
+});
+
+
+    //Inicite server in each node
+    nodes.forEach(node => {
+        node.startServer();
+    });
+
+
+    //Config balancer to distribuite all conection between socket
+    const loadBalancer = new LoadBalancer(nodes)
+
+    //Get next node
+    network.getNextNode = () => loadBalancer.routeRequest();
+    
 }
 
 //criando a rede e adicionando nós
 const network = new Network();
 
 
-const numNodesToAdd = 10; // Numero de nós disponiveis
+const numNodesToAdd = 3; // Numero de nós disponiveis
 
 createAndAddNodes(network, numNodesToAdd)
 

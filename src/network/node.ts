@@ -11,6 +11,7 @@ export class Node {
     files: File[];
     folderPath: string;
     socket: net.Socket | null;
+    private transferredFiles: Set<string>;
 
     constructor(id: string) {
         this.id = id;
@@ -19,6 +20,7 @@ export class Node {
         this.createFolder();
         this.registerNode();
         this.socket = null; // Inicializa como null
+        this.transferredFiles = new Set<string>();
 
         // Inicializa o servidor no construtor
         this.initializeSocket();
@@ -88,19 +90,22 @@ export class Node {
 
     public uploadFile(fileName: string, fileContent: string, socket: net.Socket) {
         if (!socket.destroyed) {
-            console.log(`[Node ${this.id}] Uploading file "${fileName}"...`);
-            const filePath = path.join(this.folderPath, fileName + '.gz');
-            const compressedFilePath = filePath + '.gz';
-            const compressedFileContent = zlib.gzipSync(fileContent);
-
-            console.log(`Original file size: ${fileContent.length} bytes`);
-            console.log(`Compressed file size: ${fileContent.length} bytes`);
-
-            fs.writeFileSync(filePath, compressedFileContent);
-            console.log(`File "${fileName}" uploaded to Node ${this.id}`);
-            socket.write(JSON.stringify({ status: 'success', message: `File "${fileName}" uploaded successfully` }));
+            const masterFilePath = path.join(__dirname, 'Master', fileName); // Caminho do arquivo na pasta "Master"
+            const destinationFilePath = path.join(this.folderPath, fileName); // Caminho do arquivo no nó de destino
+    
+            if (!fs.existsSync(destinationFilePath)) { // Verificar se o arquivo já existe no nó de destino
+                console.log(`[Node ${this.id}] Uploading file "${fileName}"...`);
+                fs.copyFileSync(masterFilePath, destinationFilePath); // Copiar o arquivo da pasta "Master" para o nó de destino
+                console.log(`File "${fileName}" uploaded to Node ${this.id}`);
+                socket.write(JSON.stringify({ status: 'success', message: `File "${fileName}" uploaded successfully` }));
+            } else {
+                console.log(`File "${fileName}" already exists in Node ${this.id}, skipping upload.`);
+                socket.write(JSON.stringify({ status: 'skipped', message: `File "${fileName}" already exists` }));
+            }
         }
     }
+    
+    
 
     public downloadFile(fileName: string, socket: net.Socket) {
         if (!socket.destroyed) {
