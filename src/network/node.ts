@@ -85,8 +85,14 @@ export class Node {
     }
 
     public startServer() {
-        // Este método pode ser usado para iniciar o servidor manualmente se necessário.
+        if (!this.socket) {
+            this.initializeSocket();
+            console.log(`Server started for Node ${this.id}`);
+        } else {
+            console.log(`Server is already running for Node ${this.id}`);
+        }
     }
+    
 
     public uploadFile(fileName: string, fileContent: string, socket: net.Socket) {
         if (!socket.destroyed) {
@@ -110,11 +116,11 @@ export class Node {
     public downloadFile(fileName: string, socket: net.Socket) {
         if (!socket.destroyed) {
             console.log(`[Node ${this.id}] Downloading file "${fileName}"...`);
-            const sourceFilePath = path.join(this.folderPath, fileName + '.gz');
-
-            if (fs.existsSync(sourceFilePath)) {
-                const compressedFileContent = fs.readFileSync(sourceFilePath);
-                socket.write(JSON.stringify({ status: 'success', fileContent: compressedFileContent.toString('base64') }));
+            const filePath = path.join(this.folderPath, fileName);
+    
+            if (fs.existsSync(filePath)) {
+                const fileContent = fs.readFileSync(filePath);
+                socket.write(JSON.stringify({ status: 'success', fileContent: fileContent.toString('base64') }));
                 console.log(`[Node ${this.id}] File "${fileName}" downloaded successfully`);
             } else {
                 socket.write(JSON.stringify({ status: 'error', message: `File "${fileName}" not found on Node ${this.id}` }));
@@ -122,6 +128,7 @@ export class Node {
             }
         }
     }
+    
 
     public calculateFileHash(filePath: string): string {
         const fileData = fs.readFileSync(filePath);

@@ -24,11 +24,23 @@ app.listen(port, () => {
 // Função para sincronizar os arquivos entre os nós da rede
 function synchronizeFiles() {
     try {
-        synchronizeNetwork(network.nodes);
+        const nodes = network.getNodes(); // Obter todos os nodes existentes
+
+
+        console.log('Nós registados: ',nodes)
+                // Iniciar o servidor para cada nó
+network.nodes.forEach(node => {
+    node.startServer();
+    synchronizeNetwork(nodes);
+    network.simulateFileTransfer();
+});
+       
     } catch (error) {
         console.error("Erro ao sincronizar arquivos entre os nós da rede:", error);
     }
 }
 
 // Sincroniza os arquivos entre os nós a cada 5 minutos (exemplo)
-setInterval(synchronizeFiles, 5 * 60 * 1000); // 5 minutos em milissegundos
+//setInterval(synchronizeFiles, 5 * 60 * 1000); // 5 minutos em milissegundos
+
+setInterval(synchronizeFiles, 300);

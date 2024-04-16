@@ -98,5 +98,8 @@ export class Network {
         return this.loadBalancer.routeRequest();
     }
     
+    getNodes(): Node[] {
+        return this.nodes;
+    }
     
 }
