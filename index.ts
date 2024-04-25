@@ -11,12 +11,11 @@ Parse.initialize('5ArcuTe5JcqXnW0wE9BAkQynGnfM6ScZ38V03FlR', 'Q4moQX4vvWwcg7P5RW
 Parse.serverURL = 'https://parseapi.back4app.com/';
 
 
-
 const network = new Network();
 
 // Criando o servidor para aguardar a solicitação dos nós
 const app = express();
-const port = 3000;
+const port = 3001;
 
 app.post('/add-node', (req: express.Request, res: express.Response) => {
     const newNode = new Node(`Node ${network.nodes.length + 1}`);
