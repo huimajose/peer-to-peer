@@ -123,6 +123,11 @@ export class Node {
             newNodeInfo.set('ipAddress', ip);
             newNodeInfo.set('status', 1);
             await newNodeInfo.save();
+
+            return {
+                id: newNodeInfo.id,
+                nodeIdentifer: newNodeInfo.get('nodeIdentifier')
+            }
             
         } catch (error) {
             console.log(error)

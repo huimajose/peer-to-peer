@@ -19,10 +19,21 @@ app.post('/add-node', async (req: express.Request, res: express.Response) => {
     const newNode = new Node(`Node ${network.nodes.length + 1}`);
     network.addNode(newNode);
    
-        //await newNode.saveInfoToDatabase(); // Chama a função para salvar as informações do nó no banco de dados
+     const savedData = await newNode.saveInfoToDatabase(); // Chama a função para salvar as informações do nó no banco de dados
    
-    newNode.startServer();
-    res.send('Node added successfully');
+     if(savedData){
+
+
+        const { id, nodeIdentifer } = savedData
+
+        console.log('Id do node:', id)
+
+        newNode.startServer();
+        res.send(`Node with id ${nodeIdentifer} added successfully`);
+     }
+    
+
+   
 });
 
 app.listen(port, () => {
