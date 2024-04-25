@@ -8,12 +8,12 @@ import { RegistrationService } from "./registrationService";
 import { FileMetaData } from "../FileMetaData";
 import Parse from 'parse/node';
 import axios from 'axios';
-import {UUID} from 'uuid-generator-ts';
+import { v4 as uuidv4 } from 'uuid';
 
 
 Parse.initialize('5ArcuTe5JcqXnW0wE9BAkQynGnfM6ScZ38V03FlR', 'Q4moQX4vvWwcg7P5RWhLImD81LF4ACwneCDjB1sI','CyQjVd5BShuRHmKucenzH5Bc4DLIikK9mgOcj3VA');
 Parse.serverURL = 'https://parseapi.back4app.com/';
-const uuid = new UUID();
+
 
 export class Node {
     id: string;
@@ -84,14 +84,18 @@ export class Node {
                 this.tryReconnect();
             });
 
-            this.socket.on('data', (data) => {
-                const message = JSON.parse(data.toString());
-                if (message.type === 'upload') {
-                    this.uploadFile(message.fileName, message.fileContent, this.socket!); // Use ! para indicar que socket não é null
-                } else if (message.type === 'download') {
-                    this.downloadFile(message.fileName, this.socket!); // Use ! para indicar que socket não é null
-                }
-            });
+            if (this.socket) {
+                this.socket.on('data', (data) => {
+                    const message = JSON.parse(data.toString());
+                    if (message.type === 'upload') {
+                        this.uploadFile(message.fileName, message.fileContent, this.socket!);
+                    } else if (message.type === 'download') {
+                        this.downloadFile(message.fileName, this.socket!);
+                    }
+                });
+            } else {
+                console.error("Socket is not available.");
+            }
         }
     }
 
@@ -114,8 +118,10 @@ export class Node {
             const response = await axios.get('https://api.ipify.org?format=json');
             const ip = response.data.ip;
     
-            newNodeInfo.set('displayName', uuid.getDashFreeUUID());
+            newNodeInfo.set('displayName',uuidv4());
+            newNodeInfo.set('nodeIdentifier',uuidv4());
             newNodeInfo.set('ipAddress', ip);
+            newNodeInfo.set('status', 1);
             await newNodeInfo.save();
             
         } catch (error) {
@@ -140,10 +146,10 @@ export class Node {
         
 
                 console.log(`File "${fileName}" uploaded to Node ${this.id}`);
-                socket.write(JSON.stringify({ status: 'success', message: `File "${fileName}" uploaded successfully` }));
+                //socket.write(JSON.stringify({ status: 'success', message: `File "${fileName}" uploaded successfully` }));
             } else {
                 console.log(`File "${fileName}" already exists in Node ${this.id}, skipping upload.`);
-                socket.write(JSON.stringify({ status: 'skipped', message: `File "${fileName}" already exists` }));
+                //socket.write(JSON.stringify({ status: 'skipped', message: `File "${fileName}" already exists` }));
             }
         }
     }

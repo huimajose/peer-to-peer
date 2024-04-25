@@ -18,12 +18,9 @@ const port = 3001;
 app.post('/add-node', async (req: express.Request, res: express.Response) => {
     const newNode = new Node(`Node ${network.nodes.length + 1}`);
     network.addNode(newNode);
-    try {
-        await newNode.saveInfoToDatabase(); // Chama a função para salvar as informações do nó no banco de dados
-    } catch (error) {
-        console.log(error);
-        return res.status(500).send('Error saving node info to database');
-    }
+   
+        //await newNode.saveInfoToDatabase(); // Chama a função para salvar as informações do nó no banco de dados
+   
     newNode.startServer();
     res.send('Node added successfully');
 });
