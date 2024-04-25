@@ -29,7 +29,8 @@ app.post('/add-node', async (req: express.Request, res: express.Response) => {
         console.log('Id do node:', id)
 
         newNode.startServer();
-        res.send(`Node with id ${nodeIdentifer} and ip address ${ipAddress} added successfully`);
+        res.send(savedData)
+        //res.send(`Node with id ${nodeIdentifer} and ip address ${ipAddress} added successfully`);
      }
     
 
