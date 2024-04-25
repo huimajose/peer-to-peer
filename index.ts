@@ -4,7 +4,7 @@ import { synchronizeNetwork } from "./src/network/networkScanner";
 import express from 'express'
 import * as net from 'net';
 import Parse from "parse";
-
+import * as networkInterface from 'network'
 
 
 Parse.initialize('5ArcuTe5JcqXnW0wE9BAkQynGnfM6ScZ38V03FlR', 'Q4moQX4vvWwcg7P5RWhLImD81LF4ACwneCDjB1sI','CyQjVd5BShuRHmKucenzH5Bc4DLIikK9mgOcj3VA');
@@ -13,13 +13,34 @@ Parse.serverURL = 'https://parseapi.back4app.com/';
 
 const network = new Network();
 
+var setIp = '';
+
 // Criando o servidor para aguardar a solicitação dos nós
 const app = express();
 const port = 3001;
 
-app.post('/add-node', (req: express.Request, res: express.Response) => {
+
+
+networkInterface.get_public_ip(function(err: any, ip: any) {
+    console.log(err || ip); // should return your public IP address
+    setIp =ip
+  })
+
+app.post('/add-node', async (req: express.Request, res: express.Response) => {
     const newNode = new Node(`Node ${network.nodes.length + 1}`);
     network.addNode(newNode);
+
+
+    //Save the node info to database
+
+    const nodeInfo = Parse.Object.extend('nodes');
+    const newNodeInfo = new nodeInfo();
+
+    newNodeInfo.set('displayName', 'Teste');
+    newNodeInfo.set('ipAddress', setIp)
+
+    await newNodeInfo.save();
+
     newNode.startServer(); // Inicia o servidor para o novo nó
     res.send('Node added successfully');
 });
@@ -51,3 +72,8 @@ network.nodes.forEach(node => {
 //setInterval(synchronizeFiles, 5 * 60 * 1000); // 5 minutos em milissegundos
 
 setInterval(synchronizeFiles, 3000);
+
+function useState(arg0: string): [any, any] {
+    throw new Error("Function not implemented.");
+}
+
