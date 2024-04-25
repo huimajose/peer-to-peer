@@ -21,10 +21,10 @@ const port = 3001;
 
 
 
-networkInterface.get_public_ip(function(err: any, ip: any) {
-    console.log(err || ip); // should return your public IP address
-    setIp =ip
-  })
+
+
+  
+  console.log('endereço IP', setIp);
 
 app.post('/add-node', async (req: express.Request, res: express.Response) => {
     const newNode = new Node(`Node ${network.nodes.length + 1}`);
@@ -36,10 +36,20 @@ app.post('/add-node', async (req: express.Request, res: express.Response) => {
     const nodeInfo = Parse.Object.extend('nodes');
     const newNodeInfo = new nodeInfo();
 
-    newNodeInfo.set('displayName', 'Teste');
-    newNodeInfo.set('ipAddress', setIp)
+    networkInterface.get_public_ip(function(err: any, ip: any) {
+        //console.log(err || ip); // should return your public IP address
+        //setIp =ip
+        newNodeInfo.set('displayName', 'Teste');
+    newNodeInfo.set('ipAddress', ip)
+      })
+    
 
-    await newNodeInfo.save();
+    try {
+        await newNodeInfo.save();
+        
+    } catch (error) {
+        console.log(error)
+    }
 
     newNode.startServer(); // Inicia o servidor para o novo nó
     res.send('Node added successfully');
