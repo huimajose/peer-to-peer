@@ -124,5 +124,7 @@ export class Network {
     getNodes(): Node[] {
         return this.nodes;
     }
+
+    
     
 }

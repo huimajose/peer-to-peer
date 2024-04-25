@@ -6,7 +6,8 @@ import * as zlib from 'zlib';
 import * as net from 'net';
 import { RegistrationService } from "./registrationService";
 import { FileMetaData } from "../FileMetaData";
-import Parse = require("parse");
+import Parse from 'parse/node';
+import axios from 'axios';
 
 
 Parse.initialize('5ArcuTe5JcqXnW0wE9BAkQynGnfM6ScZ38V03FlR', 'Q4moQX4vvWwcg7P5RWhLImD81LF4ACwneCDjB1sI','CyQjVd5BShuRHmKucenzH5Bc4DLIikK9mgOcj3VA');
@@ -99,6 +100,25 @@ export class Node {
             console.log(`Server started for Node ${this.id}`);
         } else {
             console.log(`Server is already running for Node ${this.id}`);
+        }
+    }
+
+
+    async saveInfoToDatabase(){
+
+        const nodeInfo = Parse.Object.extend('nodes');
+        const newNodeInfo = new nodeInfo();
+
+        try {
+            const response = await axios.get('https://api.ipify.org?format=json');
+            const ip = response.data.ip;
+    
+            newNodeInfo.set('displayName', 'Teste');
+            newNodeInfo.set('ipAddress', ip);
+            await newNodeInfo.save();
+            
+        } catch (error) {
+            console.log(error)
         }
     }
     
