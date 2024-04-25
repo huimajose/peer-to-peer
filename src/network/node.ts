@@ -126,7 +126,8 @@ export class Node {
 
             return {
                 id: newNodeInfo.id,
-                nodeIdentifer: newNodeInfo.get('nodeIdentifier')
+                nodeIdentifer: newNodeInfo.get('nodeIdentifier'),
+                ipAddress: newNodeInfo.get('ipAddress')
             }
             
         } catch (error) {

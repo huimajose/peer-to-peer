@@ -24,12 +24,12 @@ app.post('/add-node', async (req: express.Request, res: express.Response) => {
      if(savedData){
 
 
-        const { id, nodeIdentifer } = savedData
+        const { id, nodeIdentifer, ipAddress } = savedData
 
         console.log('Id do node:', id)
 
         newNode.startServer();
-        res.send(`Node with id ${nodeIdentifer} added successfully`);
+        res.send(`Node with id ${nodeIdentifer} and ip address ${ipAddress} added successfully`);
      }
     
 
