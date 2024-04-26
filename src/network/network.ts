@@ -27,7 +27,7 @@ export class Network {
     }
 
     
-   async simulateFileTransfer() {
+    async simulateFileTransfer() {
         if (this.nodes.length < 2) {
             console.log("Need at least two nodes for a file transfer");
             return;
@@ -41,6 +41,8 @@ export class Network {
             return;
         }
     
+        const FileObject = Parse.Object.extend('Files'); // Criação do objeto FileObject fora do loop
+    
         this.nodes.forEach((sender, index) => {
             const receiverIndex = (index + 1) % this.nodes.length; // Circularmente, envie para o próximo nó da lista
             const receiver = this.nodes[receiverIndex];
@@ -48,30 +50,39 @@ export class Network {
                 filesInMaster.forEach(async fileName => {
                     const filePath = path.join(masterFolderPath, fileName);
                     const fileContent = fs.readFileSync(filePath, 'utf-8');
-                    sender.uploadFile(fileName, fileContent, receiver.socket!);
-
-                    const FileObject = Parse.Object.extend('Files');
-                    const fileObject = new FileObject()
-            
-        
-                fileObject.set('fileName', fileName);
-                fileObject.set('filePath', filePath);
-              
-        
-                try {
-        
-                    await fileObject.save();
-                    console.log('File metadata saved successfully');
-                    
-                } catch (error) {
-                    console.error('Error saving file metadata:', error);
-                }
+    
+                    // Verifica se o arquivo já existe no destino
+                    if (!receiver.hasFile(fileName)) {
+                        sender.uploadFile(fileName, fileContent, receiver.socket!);
+    
+                        // Verifica se o arquivo já está cadastrado no banco de dados
+                        const query = new Parse.Query(FileObject);
+                        query.equalTo('fileName', fileName);
+                        try {
+                            const existingFile = await query.first();
+                            if (!existingFile) { // Se o arquivo ainda não está cadastrado
+                                const fileObject = new FileObject(); // Cria um novo objeto FileObject
+                                fileObject.set('fileName', fileName);
+                                fileObject.set('filePath', filePath);
+                                await fileObject.save();
+                                console.log('File metadata saved successfully');
+                            } else {
+                                console.log('File metadata already exists in the database');
+                            }
+                        } catch (error) {
+                            console.error('Error checking file metadata:', error);
+                        }
+                    } else {
+                        console.log(`Skipping upload: File ${fileName} already exists at the destination.`);
+                    }
                 });
             } else {
                 console.log(`Skipping upload: Node ${receiver.id} does not have a valid socket.`);
             }
         });
     }
+    
+    
     
     createNodeFolders() {
         this.nodes.forEach(node  =>{

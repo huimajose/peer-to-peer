@@ -43,6 +43,11 @@ export class Node {
         }
     }
 
+      // Verifica se um arquivo existe na lista de arquivos deste nó
+      hasFile(fileName: any) {
+        return this.files.includes(fileName);
+    }
+
     private registerNode() {
         const registrationService = RegistrationService.getInstance();
         registrationService.registerNode(this);
