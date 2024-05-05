@@ -3,6 +3,7 @@ import { Node } from "./src/network/node";
 import { synchronizeNetwork } from "./src/network/networkScanner";
 import express from 'express';
 import Parse from "parse";
+import { DB } from "./src/lib/db/db";
 
 
 Parse.initialize('5ArcuTe5JcqXnW0wE9BAkQynGnfM6ScZ38V03FlR', 'Q4moQX4vvWwcg7P5RWhLImD81LF4ACwneCDjB1sI','CyQjVd5BShuRHmKucenzH5Bc4DLIikK9mgOcj3VA');
@@ -15,12 +16,19 @@ const app = express();
 const port = 3001;
 
 
+
+
+
 app.post('/add-node', async (req: express.Request, res: express.Response) => {
     const newNode = new Node(`Node ${network.nodes.length + 1}`);
     network.addNode(newNode);
+
+    //initialize the DB instance
+DB.init();
    
-     const savedData = await newNode.saveInfoToDatabase(); // Chama a função para salvar as informações do nó no banco de dados
-   
+    const savedData = await DB.saveInfoToDatabase(); 
+     //const savedData = await newNode.saveInfoToDatabase(); // Chama a função para salvar as informações do nó no banco de dados
+     //const savedData = await DB.saveInfoToDatabase(); 
      if(savedData){
 
 

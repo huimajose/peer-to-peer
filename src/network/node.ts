@@ -9,6 +9,7 @@ import { FileMetaData } from "../FileMetaData";
 import Parse from 'parse/node';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
+import { DB } from "../lib/db/db";
 
 
 Parse.initialize('5ArcuTe5JcqXnW0wE9BAkQynGnfM6ScZ38V03FlR', 'Q4moQX4vvWwcg7P5RWhLImD81LF4ACwneCDjB1sI','CyQjVd5BShuRHmKucenzH5Bc4DLIikK9mgOcj3VA');
