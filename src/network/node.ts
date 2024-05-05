@@ -1,19 +1,8 @@
 import { File } from "../file";
 import * as path from "path";
 import * as fs from 'fs';
-import * as crypto from "crypto";
-import * as zlib from 'zlib';
 import * as net from 'net';
 import { RegistrationService } from "./registrationService";
-import { FileMetaData } from "../FileMetaData";
-import Parse from 'parse/node';
-import axios from 'axios';
-import { v4 as uuidv4 } from 'uuid';
-import { DB } from "../lib/db/db";
-
-
-Parse.initialize('5ArcuTe5JcqXnW0wE9BAkQynGnfM6ScZ38V03FlR', 'Q4moQX4vvWwcg7P5RWhLImD81LF4ACwneCDjB1sI','CyQjVd5BShuRHmKucenzH5Bc4DLIikK9mgOcj3VA');
-Parse.serverURL = 'https://parseapi.back4app.com/';
 
 
 export class Node {
@@ -115,32 +104,7 @@ export class Node {
     }
 
 
-    async saveInfoToDatabase(){
 
-        const nodeInfo = Parse.Object.extend('nodes');
-        const newNodeInfo = new nodeInfo();
-
-        try {
-            const response = await axios.get('https://api.ipify.org?format=json');
-            const ip = response.data.ip;
-    
-            newNodeInfo.set('displayName',uuidv4());
-            newNodeInfo.set('nodeIdentifier',uuidv4());
-            newNodeInfo.set('ipAddress', ip);
-            newNodeInfo.set('status', 1);
-            await newNodeInfo.save();
-
-            return {
-                id: newNodeInfo.id,
-                nodeIdentifer: newNodeInfo.get('nodeIdentifier'),
-                ipAddress: newNodeInfo.get('ipAddress')
-            }
-            
-        } catch (error) {
-            console.log(error)
-        }
-    }
-    
 
     public uploadFile(fileName: string, fileContent: string, socket: net.Socket) {
 

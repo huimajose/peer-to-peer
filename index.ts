@@ -27,8 +27,7 @@ app.post('/add-node', async (req: express.Request, res: express.Response) => {
 DB.init();
    
     const savedData = await DB.saveInfoToDatabase(); 
-     //const savedData = await newNode.saveInfoToDatabase(); // Chama a função para salvar as informações do nó no banco de dados
-     //const savedData = await DB.saveInfoToDatabase(); 
+   
      if(savedData){
 
 
