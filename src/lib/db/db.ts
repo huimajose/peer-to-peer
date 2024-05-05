@@ -2,6 +2,7 @@ import fs from 'fs';
 import Parse from "parse/node";
 import axios from "axios";
 import { v4 as uuidv4 } from 'uuid';
+import { Node } from '../../network/node';
 
 const APP_ID = process.env.PARSE_APP_ID || '5ArcuTe5JcqXnW0wE9BAkQynGnfM6ScZ38V03FlR';
 const JS_KEY = process.env.PARSE_JS_KEY || 'Q4moQX4vvWwcg7P5RWhLImD81LF4ACwneCDjB1sI';
@@ -41,7 +42,21 @@ export class DB {
             return data;
         } catch (error) {
             console.error("Error saving info to database:", error);
-            //throw error; // ou return null; dependendo do contexto
+            return null;
+        }
+    }
+
+    static async getNodesFromDatabase(): Promise<Node[]> {
+        const NodeClass = Parse.Object.extend('nodes');
+        const query = new Parse.Query(NodeClass);
+        try {
+            const nodes = await query.find();
+            return nodes.map(node => {
+                return new Node(node.get('nodeIdentifier'));
+            });
+        } catch (error) {
+            console.error("Error fetching nodes from database:", error);
+            return [];
         }
     }
 }

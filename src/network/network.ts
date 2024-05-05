@@ -6,6 +6,7 @@ import { File } from "../file";
 import path from 'path';
 import { LoadBalancer } from '../balancers/balance';
 import Parse from 'parse/node';
+import { DB } from '../lib/db/db';
 
 const NUM_FILES_TO_SEND = 3;
 Parse.initialize('5ArcuTe5JcqXnW0wE9BAkQynGnfM6ScZ38V03FlR', 'Q4moQX4vvWwcg7P5RWhLImD81LF4ACwneCDjB1sI','CyQjVd5BShuRHmKucenzH5Bc4DLIikK9mgOcj3VA');
@@ -21,6 +22,8 @@ export class Network {
         this.nodes = []
         this.loadBalancer = new LoadBalancer(this.nodes)
     }
+
+
 
     addNode(node: Node){
         this.nodes.push(node);
@@ -132,7 +135,17 @@ export class Network {
         return this.loadBalancer.routeRequest();
     }
     
-    getNodes(): Node[] {
+    async getNodes():Promise<Node[]> {
+
+        DB.init();
+
+        const nodesFromDB = await DB.getNodesFromDatabase();
+
+        // Se os nós retornados do banco de dados não estiverem vazios, atualize os nós
+        if (nodesFromDB.length > 0) {
+            this.nodes = nodesFromDB;
+        }
+        
         return this.nodes;
     }
 

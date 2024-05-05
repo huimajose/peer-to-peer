@@ -3,6 +3,7 @@ import * as path from "path";
 import * as fs from 'fs';
 import * as net from 'net';
 import { RegistrationService } from "./registrationService";
+import { downloadFileFromS3 } from '../lib/aws/s3'
 
 
 export class Node {
@@ -130,7 +131,36 @@ export class Node {
         }
     }
     
-    
+   
+
+    /*
+  
+    public async uploadFile(fileName: string, fileContent: string,socket: net.Socket) {
+        if (!socket.destroyed) {
+            try {
+                const tempFilePath = path.join(__dirname, 'temp', fileName); // Caminho temporário para baixar o arquivo do S3
+                await downloadFileFromS3(fileName, tempFilePath); // Baixa o arquivo do S3 para o diretório temporário
+
+                const destinationFilePath = path.join(this.folderPath, fileName); // Caminho do arquivo no nó de destino
+
+                if (!fs.existsSync(destinationFilePath)) { // Verificar se o arquivo já existe no nó de destino
+                    console.log(`[Node ${this.id}] Uploading file "${fileName}"...`);
+                    fs.copyFileSync(tempFilePath, destinationFilePath); // Copiar o arquivo baixado do diretório temporário para o nó de destino
+
+                    console.log(`File "${fileName}" uploaded to Node ${this.id}`);
+                } else {
+                    console.log(`File "${fileName}" already exists in Node ${this.id}, skipping upload.`);
+                }
+
+                // Remover o arquivo do diretório temporário
+                fs.unlinkSync(tempFilePath);
+            } catch (error) {
+                console.error(`Error uploading file "${fileName}" to Node ${this.id}:`, error);
+            }
+        }
+    }
+
+    */
 
     public downloadFile(fileName: string, socket: net.Socket) {
         if (!socket.destroyed) {

@@ -4,7 +4,7 @@ import { Node } from "./node";
  * Varre a rede e sincroniza os arquivos entre os nós.
  * @param nodes Os nós da rede a serem verificados e sincronizados.
  */
-export function synchronizeNetwork(nodes: Node[]) {
+export async function synchronizeNetwork(nodes: Node[]) {
     // Itera sobre cada nó na rede
     for (const node of nodes) {
         // Verifica se o nó possui um socket válido

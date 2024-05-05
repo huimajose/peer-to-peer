@@ -48,14 +48,14 @@ app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
 
-function synchronizeFiles() {
+async function synchronizeFiles() {
     try {
-        const nodes = network.getNodes(); 
+        const nodes = await network.getNodes(); 
         network.nodes.forEach(node => {
             node.startServer();
-            synchronizeNetwork(nodes);
-            network.simulateFileTransfer();
         });
+        await synchronizeNetwork(nodes);
+            network.simulateFileTransfer();
        
     } catch (error) {
         console.error("Erro ao sincronizar arquivos entre os nós da rede:", error);
